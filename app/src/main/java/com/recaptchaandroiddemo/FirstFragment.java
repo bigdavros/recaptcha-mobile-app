@@ -27,6 +27,50 @@ public class FirstFragment extends Fragment {
     private String port = "";
     private String endpoint = "api";
     private String proto = "http"; // or https
+    private String xapikey = "";
+    
+    private void sendRequest() {
+        OutputStream out = null;
+        try {
+            URL url = new URL(proto+"://"+ipAddr+":"+port+"/"+endpoint);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setRequestProperty("X-API-Key",xapikey);
+            out = new BufferedOutputStream(conn.getOutputStream());
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write("{\"type\":\"android\"}");
+            writer.flush();
+            writer.close();
+            out.close();
+            conn.connect();
+            try {
+                InputStream is = conn.getInputStream();
+                byte[] b1 = new byte[1024];
+                StringBuffer buffer = new StringBuffer();
+
+                while ( is.read(b1) != -1)
+                    buffer.append(new String(b1));
+
+                conn.disconnect();
+                try {
+                    JSONObject jsonObject = new JSONObject(buffer.toString());
+                    tx1.setText("Data: " + jsonObject.getString("data")+"\n"+"Result: " + jsonObject.getString("result"));
+                }
+                catch (Exception e) {
+                    tx1.setText("error\nApp Error: Couldn't create JSON object");
+                }
+            } catch (Exception e) {
+                tx1.setText("error\nApp Error: Couldn't read buffer");
+            }
+        } catch (Exception e) {
+            tx1.setText("error\nApp Error: Couldn't connect to URL");
+        }
+    }
 
     @Override
     public View onCreateView(
@@ -46,48 +90,7 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding.buttonFirst.setOnClickListener(new View.OnClickListener() {
 
-            private void sendRequest() {
-                OutputStream out = null;
-                try {
-                    URL url = new URL(proto+"://"+ipAddr+":"+port+"/"+endpoint);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000);
-                    conn.setConnectTimeout(15000);
-                    conn.setRequestMethod("POST");
-                    conn.setDoInput(true);
-                    conn.setDoOutput(true);
-                    conn.setRequestProperty("X-API-Key","TEST");
-                    out = new BufferedOutputStream(conn.getOutputStream());
-
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                    writer.write("{\"type\":\"android\"}");
-                    writer.flush();
-                    writer.close();
-                    out.close();
-                    conn.connect();
-                    try {
-                        InputStream is = conn.getInputStream();
-                        byte[] b1 = new byte[1024];
-                        StringBuffer buffer = new StringBuffer();
-
-                        while ( is.read(b1) != -1)
-                            buffer.append(new String(b1));
-
-                        conn.disconnect();
-                        try {
-                            JSONObject jsonObject = new JSONObject(buffer.toString());
-                            tx1.setText("Data: " + jsonObject.getString("data")+"\n"+"Result: " + jsonObject.getString("result"));
-                        }
-                        catch (Exception e) {
-                            tx1.setText("error\nApp Error: Couldn't create JSON object");
-                        }
-                    } catch (Exception e) {
-                        tx1.setText("error\nApp Error: Couldn't read buffer");
-                    }
-                } catch (Exception e) {
-                    tx1.setText("error\nApp Error: Couldn't connect to URL");
-                }
-            }
+            
 
             @Override
             public void onClick(View view) {
