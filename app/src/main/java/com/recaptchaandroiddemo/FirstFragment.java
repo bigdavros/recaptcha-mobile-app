@@ -23,6 +23,7 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private TextView tx1;
+    private Button bt1;
     private String ipAddr = "";
     private String port = "";
     private String endpoint = "api";
@@ -60,12 +61,15 @@ public class FirstFragment extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(buffer.toString());
                     tx1.setText("Data: " + jsonObject.getString("data")+"\n"+"Result: " + jsonObject.getString("result"));
+                    bt1.setClickable(false);
+                    bt1.setVisibility(View.INVISIBLE);
                 }
                 catch (Exception e) {
                     tx1.setText("error\nApp Error: Couldn't create JSON object");
                 }
             } catch (Exception e) {
                 tx1.setText("error\nApp Error: Couldn't read buffer");
+                conn.disconnect();
             }
         } catch (Exception e) {
             tx1.setText("error\nApp Error: Couldn't connect to URL");
@@ -80,6 +84,7 @@ public class FirstFragment extends Fragment {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         tx1 = binding.textviewFirst;
+        bt1 = binding.buttonFirst;
         return binding.getRoot();
     }
 
