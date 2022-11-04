@@ -28,27 +28,6 @@ import androidx.fragment.app.Fragment;
 
 import com.recaptchaandroiddemo.databinding.FragmentFirstBinding;
 
-class Reply{
-    private String data;
-    private String result;
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public String getResult() {
-        return result;
-    }
-}
-
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
@@ -76,8 +55,7 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding.buttonFirst.setOnClickListener(new View.OnClickListener() {
 
-            private Reply sendRequest() {
-                Reply reply = new Reply();
+            private void sendRequest() {
                 OutputStream out = null;
                 try {
                     URL url = new URL(proto+"://"+ipAddr+":"+port+"/"+endpoint);
@@ -107,38 +85,27 @@ public class FirstFragment extends Fragment {
                         conn.disconnect();
                         try {
                             JSONObject jsonObject = new JSONObject(buffer.toString());
-                            reply.setData(jsonObject.getString("data"));
-                            reply.setResult(jsonObject.getString("result"));
+                            tx1.setText("Data: " + jsonObject.getString("data")+"\n"+"Result: " + jsonObject.getString("result"));
                         }
-                        catch(Exception e){
-                            reply.setData("error");
-                            reply.setResult("App Error: Couldn't create JSON object");
+                        catch (Exception e) {
+                            tx1.setText("error\nApp Error: Couldn't create JSON object");
                         }
+                    } catch (Exception e) {
+                        tx1.setText("error\nApp Error: Couldn't read buffer");
                     }
-                    catch(Exception e){
-                        reply.setData("error");
-                        reply.setResult("App Error: Couldn't read buffer");
-                    }
+                } catch (Exception e) {
+                    tx1.setText("error\nApp Error: Couldn't connect to URL");
                 }
-                catch(Exception e){
-                    reply.setData("error");
-                    reply.setResult("App Error: Couldn't connect to URL");
-                }
-                return reply;
             }
+
             @Override
             public void onClick(View view) {
-                Reply reply;
                 try{
-                    reply = (Reply) sendRequest();
+                    sendRequest();
                 }
                 catch(Exception e){
-                    reply = new Reply();
-                    reply.setData("error");
-                    reply.setResult("App Error: Can't send request to server");
+                    tx1.setText("error\nApp Error: Problem with reCAPTCHA execute()");
                 }
-
-                tx1.setText(reply.getData()+"\n"+reply.getResult());
             }
         });
     }
