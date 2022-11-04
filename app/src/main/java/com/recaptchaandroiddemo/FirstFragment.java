@@ -6,23 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.io.InputStream;
-import java.io.BufferedReader;
-
 import org.json.JSONObject;
-
-/*import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;*/
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -115,4 +106,5 @@ public class FirstFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 }
