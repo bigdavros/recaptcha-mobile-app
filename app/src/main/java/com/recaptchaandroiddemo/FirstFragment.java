@@ -23,8 +23,8 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private TextView tx1;
-    private String ipAddr = "192.168.240.59";
-    private String port = "8080";
+    private String ipAddr = "";
+    private String port = "";
     private String endpoint = "api";
     private String proto = "http"; // or https
 
